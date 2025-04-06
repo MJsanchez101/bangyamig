@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cold Face Emoji Meme</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .shake {
+      animation: shake 0.5s infinite;
+    }
+    @keyframes shake {
+      0% { transform: translate(1px, 1px) rotate(0deg); }
+      10% { transform: translate(-1px, -2px) rotate(-1deg); }
+      20% { transform: translate(-3px, 0px) rotate(1deg); }
+      30% { transform: translate(3px, 2px) rotate(0deg); }
+      40% { transform: translate(1px, -1px) rotate(1deg); }
+      50% { transform: translate(-1px, 2px) rotate(-1deg); }
+      60% { transform: translate(-3px, 1px) rotate(0deg); }
+      70% { transform: translate(3px, 1px) rotate(-1deg); }
+      80% { transform: translate(-1px, -1px) rotate(1deg); }
+      90% { transform: translate(1px, 2px) rotate(0deg); }
+      100% { transform: translate(1px, -2px) rotate(-1deg); }
+    }
+    .emoji {
+      font-size: 10rem;
+      transition: transform 0.3s ease;
+    }
+    .grow {
+      transform: scale(1.2);
+    }
+    .ice-particles {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background-color: #a5f3fc;
+      border-radius: 50%;
+      opacity: 0.7;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body class="bg-blue-900 min-h-screen flex flex-col items-center justify-center text-white">
+  <div class="max-w-lg w-full bg-gradient-to-b from-blue-800 to-blue-600 rounded-xl shadow-2xl p-6 relative overflow-hidden">
+    <div class="absolute top-0 left-0 w-full h-full opacity-20">
+      <div class="absolute top-10 left-10 w-20 h-20 bg-white rounded-full blur-xl"></div>
+      <div class="absolute bottom-10 right-10 w-32 h-32 bg-blue-200 rounded-full blur-xl"></div>
+    </div>
+    
+    <div class="text-center relative z-10">
+      <h1 class="text-4xl font-bold mb-6 text-blue-100">BRRRR!</h1>
+      
+      <div class="flex flex-col items-center justify-center">
+        <div id="emoji-container" class="emoji mb-2 cursor-pointer">🥶</div>
+        <div id="temperature" class="text-6xl font-bold text-blue-200 mb-6">-20°C</div>
+      </div>
+      
+      <div class="mt-4 bg-blue-700 bg-opacity-50 p-4 rounded-lg border border-blue-400">
+        <p class="text-2xl font-bold" id="reaction-text">So cold I can't feel my pixels!</p>
+      </div>
+      
+      <button id="more-cold" class="mt-8 bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-6 rounded-lg transition-all transform hover:scale-105 active:scale-95">
+        Make It Colder!
+      </button>
+    </div>
+  </div>
+  
+  <p class="mt-4 text-blue-300 text-sm">Keep clicking for maximum freezing!</p>
+  
+  <script>
+    const emojiContainer = document.getElementById('emoji-container');
+    const temperatureDisplay = document.getElementById('temperature');
+    const reactionText = document.getElementById('reaction-text');
+    const moreColdBtn = document.getElementById('more-cold');
+    
+    let temperature = -20;
+    let isShaking = false;
+    let clickCount = 0;
+    
+    const coldReactions = [
+      "So cold I can't feel my pixels!",
+      "Help! I'm freezing over here!",
+      "My blue is turning bluer!",
+      "Is this what the inside of a freezer feels like?",
+      "Even my teeth are chattering in binary!",
+      "I've got frost-byte!",
+      "Cold enough to freeze a screenshot!",
+      "My code is getting frostbite!",
+      "Colder than my ex's heart!",
+      "I'm practically an ice sculpture now!"
+    ];
+    
+    // Create ice particle effect
+    function createIceParticle(x, y) {
+      const particle = document.createElement('div');
+      particle.classList.add('ice-particles');
+      particle.style.left = `${x}px`;
+      particle.style.top = `${y}px`;
+      
+      document.body.appendChild(particle);
+      
+      // Animate the particle
+      let posY = y;
+      let posX = x;
+      let opacity = 0.7;
+      let size = Math.random() * 5 + 3;
+      
+      particle.style.width = `${size}px`;
+      particle.style.height = `${size}px`;
+      
+      const animateParticle = () => {
+        posY -= 1;
+        posX += (Math.random() - 0.5) * 2;
+        opacity -= 0.01;
+        
+        particle.style.top = `${posY}px`;
+        particle.style.left = `${posX}px`;
+        particle.style.opacity = opacity;
+        
+        if (opacity > 0) {
+          requestAnimationFrame(animateParticle);
+        } else {
+          particle.remove();
+        }
+      };
+      
+      requestAnimationFrame(animateParticle);
+    }
+    
+    function makeColder() {
+      temperature -= 5;
+      clickCount++;
+      temperatureDisplay.textContent = `${temperature}°C`;
+      
+      emojiContainer.classList.add('grow');
+      setTimeout(() => emojiContainer.classList.remove('grow'), 300);
+      
+      // Add more shaking at lower temperatures
+      if (temperature <= -40 && !isShaking) {
+        temperatureDisplay.classList.add('shake');
+        emojiContainer.classList.add('shake');
+        isShaking = true;
+      }
+      
+      // Change reactions
+      const randomReaction = coldReactions[Math.floor(Math.random() * coldReactions.length)];
+      reactionText.textContent = randomReaction;
+      
+      // Make text shake if cold enough
+      if (temperature <= -50) {
+        reactionText.classList.add('shake');
+      }
+      
+      // Make the entire body shake when super cold
+      if (temperature <= -80) {
+        document.body.classList.add('shake');
+      }
+      
+      // Create ice particles on click
+      const rect = emojiContainer.getBoundingClientRect();
+      for (let i = 0; i < 10; i++) {
+        const x = rect.left + rect.width / 2 + (Math.random() - 0.5) * rect.width;
+        const y = rect.top + rect.height / 2;
+        createIceParticle(x, y);
+      }
+      
+      // Easter egg after many clicks
+      if (clickCount >= 10) {
+        document.body.style.backgroundColor = "#0c4a6e";
+        emojiContainer.style.textShadow = "0 0 15px #a5f3fc";
+      }
+    }
+    
+    // Make it colder when clicking the emoji
+    emojiContainer.addEventListener('click', makeColder);
+    
+    // Also make it colder with the button
+    moreColdBtn.addEventListener('click', () => {
+      makeColder();
+      
+      // Create button press effect
+      const rect = moreColdBtn.getBoundingClientRect();
+      for (let i = 0; i < 5; i++) {
+        const x = rect.left + Math.random() * rect.width;
+        const y = rect.top + Math.random() * rect.height;
+        createIceParticle(x, y);
+      }
+    });
+    
+    // Create occasional random ice particles
+    setInterval(() => {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      createIceParticle(Math.random() * width, Math.random() * height);
+    }, 1000);
+  </script>
+</body>
+</html>
